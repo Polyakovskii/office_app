@@ -8,8 +8,9 @@ class Worker(models.Model):
     def __str__(self):
         return self.name
 
-    def history(self):
-        self.workerinroom_set.all()
+    @property
+    def history_of_work(self):
+        return [a for a in self.workerinroom_set.all()]
 
 class Room(models.Model):
     capacity = models.PositiveIntegerField()
