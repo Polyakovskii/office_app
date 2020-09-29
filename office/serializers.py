@@ -4,7 +4,7 @@ from .models import Room, Worker, WorkerInRoom
 
 class RoomWorkerInRoomSerializer(serializers.ModelSerializer):
 
-    worker = serializers.SlugRelatedField(slug_field='name', queryset=WorkerInRoom.objects.all())
+    worker = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     class Meta:
         model = WorkerInRoom
@@ -23,6 +23,12 @@ class AddWorkerInRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkerInRoom
         fields = ('worker', 'date_of_beginning', 'date_of_ending')
+
+    def validate(self, data):
+        if data['date_of_beginning'] > data['date_of_ending']:
+            raise serializers.ValidationError("Date of ending can't be later then date of beginning")
+        return data
+
 
 class ListRoomSerializer(serializers.ModelSerializer):
 
