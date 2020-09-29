@@ -18,6 +18,12 @@ class WorkerInRoomSerializer(serializers.ModelSerializer):
         fields = ('room', 'date_of_beginning', 'date_of_ending')
 
 
+class AddWorkerInRoomSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WorkerInRoom
+        fields = ('worker', 'date_of_beginning', 'date_of_ending')
+
 class ListRoomSerializer(serializers.ModelSerializer):
 
     class Meta:

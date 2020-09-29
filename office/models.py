@@ -25,7 +25,7 @@ class Room(models.Model):
 
     def add_worker(self, worker, date_of_beginning, date_of_ending):
         if self.workerinroom_set.count() < self.capacity:
-            return WorkerInRoom.objects.create(worker=worker, date_of_beginning=date_of_beginning, date_of_ending=date_of_ending)
+            return WorkerInRoom.objects.create(room=self ,worker=worker, date_of_beginning=date_of_beginning, date_of_ending=date_of_ending)
         else:
             return None
 
