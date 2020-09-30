@@ -1,8 +1,8 @@
 from django.db import models
 from rest_framework import status
-from django.core.exceptions import ObjectDoesNotExist
 import datetime
 # Create your models here.
+
 
 class Worker(models.Model):
     name = models.CharField(max_length=100)
@@ -20,11 +20,16 @@ class Room(models.Model):
 
     @property
     def workers_now(self):
-        return list(self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today()))
+        return list(self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today(), date_of_beginning__lte=datetime.date.today()))
 
     @property
-    def count_of_workers(self):
-        return self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today()).count()
+    def workers_for_all_time(self):
+        return list(self.workerinroom_set.all())
+
+    @property
+    def count_of_workers_now(self):
+        return self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today(),
+                                            date_of_beginning__lte=datetime.date.today()).count()
 
     def add_worker(self, worker, date_of_beginning, date_of_ending):
         if WorkerInRoom.objects.filter(date_of_ending__gte=date_of_beginning, date_of_beginning__lte=date_of_beginning).count() < self.capacity:
