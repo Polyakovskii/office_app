@@ -8,50 +8,64 @@ from .serializers import ListRoomSerializer, \
     AddWorkerInRoomSerializer
 from .filters import RoomsFilter
 from django_filters import rest_framework as filters
+from rest_framework.decorators import action
 # Create your views here.
 
 
-class RoomView(viewsets.GenericViewSet,
-               viewsets.mixins.ListModelMixin,
-               viewsets.mixins.RetrieveModelMixin,
-               viewsets.mixins.CreateModelMixin,
-               viewsets.mixins.UpdateModelMixin):
+class RoomView(
+    viewsets.GenericViewSet,
+    viewsets.mixins.ListModelMixin,
+    viewsets.mixins.RetrieveModelMixin,
+    viewsets.mixins.CreateModelMixin,
+    viewsets.mixins.UpdateModelMixin
+):
 
     queryset = Room.objects.all()
     filter_backends = (filters.DjangoFilterBackend, )
     filterset_class = RoomsFilter
+    default_serializer_class = ListRoomSerializer
+    serializer_classes = {
+        'list': ListRoomSerializer,
+        'create': ListRoomSerializer,
+        'retrieve': RetrieveRoomSerializer,
+        'update': RetrieveRoomSerializer,
+        'add_worker_to_room': AddWorkerInRoomSerializer
+    }
 
     def get_serializer_class(self):
-        if self.action in ('list', 'create'):
-            return ListRoomSerializer
-        if self.action in ('retrieve', 'update'):
-            return RetrieveRoomSerializer
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
 
-
-class AddWorkerToRoomView(viewsets.GenericViewSet, viewsets.mixins.CreateModelMixin):
-    queryset = WorkerInRoom.objects.all()
-    serializer_class = AddWorkerInRoomSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    @action(detail=True, methods=['post'])
+    def add_worker_to_room(self, request, pk):
+        serializer = AddWorkerInRoomSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        room = Room.objects.get(pk=self.kwargs['pk'])
-        message, creation_status = room.add_worker(serializer.validated_data['worker'],
-                                                   serializer.validated_data['date_of_beginning'],
-                                                   serializer.validated_data['date_of_ending'])
+        room = Room.objects.get(pk=pk)
+        message, creation_status = room.add_worker(
+            serializer.validated_data['worker'],
+            serializer.validated_data['date_of_beginning'],
+            serializer.validated_data['date_of_ending']
+        )
         return Response(data=message, status=creation_status)
 
 
-class WorkerView(viewsets.GenericViewSet,
-                 viewsets.mixins.ListModelMixin,
-                 viewsets.mixins.RetrieveModelMixin,
-                 viewsets.mixins.CreateModelMixin,
-                 viewsets.mixins.UpdateModelMixin):
+class WorkerView(
+    viewsets.GenericViewSet,
+    viewsets.mixins.ListModelMixin,
+    viewsets.mixins.RetrieveModelMixin,
+    viewsets.mixins.CreateModelMixin,
+    viewsets.mixins.UpdateModelMixin
+):
 
     queryset = Worker.objects.all()
+    default_serializer_class = ListWorkerSerializer
+    serializer_classes = {
+        'list': ListWorkerSerializer,
+        'create': ListWorkerSerializer,
+        'retrieve': RetrieveWorkerSerializer,
+        'update': ListWorkerSerializer
+    }
 
     def get_serializer_class(self):
-        if self.action in ('list', 'create', 'update'):
-            return ListWorkerSerializer
-        if self.action in 'retrieve':
-            return RetrieveWorkerSerializer
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+

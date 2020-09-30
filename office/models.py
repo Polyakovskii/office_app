@@ -20,7 +20,10 @@ class Room(models.Model):
 
     @property
     def workers_now(self):
-        return list(self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today(), date_of_beginning__lte=datetime.date.today()))
+        return list(self.workerinroom_set.filter(
+            date_of_ending__gte=datetime.date.today(),
+            date_of_beginning__lte=datetime.date.today())
+        )
 
     @property
     def workers_for_all_time(self):
@@ -28,19 +31,27 @@ class Room(models.Model):
 
     @property
     def count_of_workers_now(self):
-        return self.workerinroom_set.filter(date_of_ending__gte=datetime.date.today(),
-                                            date_of_beginning__lte=datetime.date.today()).count()
+        return self.workerinroom_set.filter(
+            date_of_ending__gte=datetime.date.today(),
+            date_of_beginning__lte=datetime.date.today()
+        ).count()
 
     def add_worker(self, worker, date_of_beginning, date_of_ending):
-        if WorkerInRoom.objects.filter(date_of_ending__gte=date_of_beginning, date_of_beginning__lte=date_of_beginning).count() < self.capacity:
-            if worker.workerinroom_set.filter(models.Q(date_of_ending__gte=date_of_beginning, date_of_beginning__lte=date_of_beginning)|
-                                              models.Q(date_of_ending__lte=date_of_ending, date_of_beginning__gte=date_of_beginning)|
-                                              models.Q(date_of_ending__gte=date_of_ending, date_of_beginning__lte=date_of_ending)
-                                              ).count() == 0:
-                WorkerInRoom.objects.create(room=self,
-                                            worker=worker,
-                                            date_of_beginning=date_of_beginning,
-                                            date_of_ending=date_of_ending)
+        if WorkerInRoom.objects.filter(
+                date_of_ending__gte=date_of_beginning,
+                date_of_beginning__lte=date_of_beginning
+        ).count() < self.capacity:
+            if worker.workerinroom_set.filter(
+                    models.Q(date_of_ending__gte=date_of_beginning, date_of_beginning__lte=date_of_beginning)|
+                    models.Q(date_of_ending__lte=date_of_ending, date_of_beginning__gte=date_of_beginning)|
+                    models.Q(date_of_ending__gte=date_of_ending, date_of_beginning__lte=date_of_ending)
+            ).count() == 0:
+                WorkerInRoom.objects.create(
+                    room=self,
+                    worker=worker,
+                    date_of_beginning=date_of_beginning,
+                    date_of_ending=date_of_ending
+                )
                 return "Successfully created", status.HTTP_201_CREATED
             else:
                 return 'Person works somewhere else in this period', status.HTTP_400_BAD_REQUEST
