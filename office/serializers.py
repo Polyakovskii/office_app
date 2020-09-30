@@ -34,12 +34,12 @@ class ListRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ('capacity', 'count_of_workers')
+        fields = ('id', 'capacity', 'count_of_workers')
 
 
 class RetrieveRoomSerializer(serializers.ModelSerializer):
 
-    workers = RoomWorkerInRoomSerializer(many=True)
+    workers_now = RoomWorkerInRoomSerializer(many=True)
 
     class Meta:
         model = Room
