@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Worker, Room, WorkerInRoom
+from office.models import Worker, Room, WorkerInRoom
 # Register your models here.
 
 admin.site.register(Worker)

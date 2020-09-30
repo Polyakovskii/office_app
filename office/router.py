@@ -1,4 +1,4 @@
-from .views import RoomView, WorkerView
+from office.views import RoomView, WorkerView
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()

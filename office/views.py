@@ -1,12 +1,12 @@
-from .models import Room, Worker, WorkerInRoom
+from office.models import Room, Worker
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .serializers import ListRoomSerializer, \
+from office.serializers import ListRoomSerializer, \
     RetrieveRoomSerializer, \
     ListWorkerSerializer, \
     RetrieveWorkerSerializer, \
     AddWorkerInRoomSerializer
-from .filters import RoomsFilter
+from office.filters import RoomsFilter
 from django_filters import rest_framework as filters
 from rest_framework.decorators import action
 # Create your views here.
@@ -67,5 +67,3 @@ class WorkerView(
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
-
-

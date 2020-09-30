@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room, Worker, WorkerInRoom
+from office.models import Room, Worker, WorkerInRoom
 
 
 class RoomWorkerInRoomSerializer(serializers.ModelSerializer):
