@@ -9,13 +9,14 @@ class RoomsFilter(filters.FilterSet):
 
     def has_free_space_filter(self, queryset, name, value):
         queryset = queryset.annotate(
-            free_space=F('capacity')-Count(expression='workerinroom__pk',
-                                           filter=Q(
-                                               workerinroom__date_of_ending__gte=value,
-                                               workerinroom__date_of_beginning__lte=value
-                                           ),
-                                           output_field=PositiveIntegerField()
-                                           )
+            free_space=F('capacity')-Count(
+                expression='workerinroom__pk',
+                filter=Q(
+                    workerinroom__date_of_ending__gte=value,
+                    workerinroom__date_of_beginning__lte=value
+                ),
+                output_field=PositiveIntegerField()
+            )
         ).filter(free_space__gt=0)
         return queryset
 
